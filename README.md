@@ -2,6 +2,9 @@
 ***Exploring Climate Change in Canada: A Dashboard to Raise Awareness and Encourage Reflection***
 ===
 
+## Quick Start
+📊 [Dashboard Link](https://climadash-ca.onrender.com)
+
 ## Introduction
 This app aims to raise awareness and promote reflection on the issue of climate change in Canada. Through interactive data visualizations and educational resources, I hope to inspire people to think more deeply about the impact of climate change on our planet and the urgent need to take action to address this global challenge. 
 
@@ -31,6 +34,4 @@ Tooltip will show the detailed data when hovering over the plots.
 `climadash_py` was created by Kelly Wu.
 It is licensed under the terms of the MIT license.
 
-## Dashboard Link
-📊 [Dashboard Link](LINK HERE)
 
