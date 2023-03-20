@@ -48,35 +48,75 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 # add multi-dropdown
 app.layout = html.Div([
-    'Choose type of data:', 
-    dcc.RadioItems( id='radio_button',
-        options=[
-            {'label': 'Temperature (C)', 'value': 'temp'},
-            {'label': 'Percipitation (mm)', 'value': 'ppt'}],
-        value='temp'
-    ),
 
-    'Select cities:', dcc.Dropdown(id='city_dropdown',
-                                  options = [{'label': city, 'value': city} for city in city_lst],
-                          value = 'VANCOUVER', 
-                          multi = False,
-                          placeholder = 'Select one city to explore'),
+    # Title Row
+     dbc.Row([
+        'Climate Tracker for Canada'], 
+        align="center", 
+        justify="center",
+        style={"background-color": "rgba(157, 179, 187, 1)",
+               "padding": "10px","margin": "10px","width": "100%",
+                "height": "40px","opacity": 1
+                     }
+                     ),
+                     
+    dbc.Row([
+        # Widget Col
+        dbc.Col([
+            'Choose a Type of Data to Start:', 
+            dcc.RadioItems( id='radio_button',
+                           options=[{'label': 'Temperature (C)', 'value': 'temp'},
+                                    {'label': 'Percipitation (mm)', 'value': 'ppt'}],
+            value='temp'),
 
-    'Select Year Range to explore the trend:', dcc.RangeSlider(id='year_slider', min= 1940, 
+            'Explore Climate Metrics By City:', 
+            dcc.Dropdown(id='city_dropdown',
+                         options = [{'label': city, 'value': city} for city in city_lst],
+                         value = 'VANCOUVER', 
+                         multi = False,
+                         placeholder = 'Select one city to explore'),
+
+            'Select Year Range to Zoom In the Trend:', 
+            dcc.RangeSlider(id='year_slider', min= 1940, 
                                     max=2019,
                                     step=1,
                                     value=[1940,2019],
-                                    marks={i: f'{int(i):,}' for i in range(1940, 2020, 5)}),
-
-    html.Iframe(id='line_plot',
-                style={'border-width': '0', 'width': '100%', 'height': '400px'}),
-    html.Iframe(id='trend_plot',
-                style={'border-width': '0', 'width': '100%', 'height': '400px'}),
-    dcc.Graph(id="map",
-              style={"padding": "0","margin": "0","width": "100%",
+                                    marks={i: f'{int(i):,}' for i in range(1940, 2020, 5)})
+            ], 
+            style = {"background-color": "rgba(205, 200, 186, 1)",
+               "padding": "10px", "margin": "10px", "width": "20%",
+               "height": "700px","opacity": 0.9 }),
+               
+        # Plot Col 
+        dbc.Col([
+            # Map 
+            dbc.Row([
+                dcc.Graph(id="map")
+                ], 
+                style={"padding": "0","margin": "0","width": "80%",
                      "height": "340px","opacity": 0.9
-                     })
-                   ]) 
+                     }
+                ),
+            # side by side trend plots
+            dbc.Row([ 
+                dbc.Col([
+                    dbc.Card([
+                    html.Iframe(id='line_plot',
+                    style={'border-width': '0', 'width': '40%', 'height': '300px'})
+                ])
+                ]),
+                dbc.Col([
+                    dbc.Card([
+                    html.Iframe(id='trend_plot',
+                    style={'border-width': '0', 'width': '40%', 'height': '300px'})
+                ])
+                ])
+                ], 
+                style={"padding": "0","margin": "0","width": "80%", 
+                       "height": "340px","opacity": 0.9})])
+    ])
+])
+
 
 # ================== Set up callbacks/backend ===================== 
 @app.callback(
@@ -99,7 +139,6 @@ def plot_lineplot(year_range, selected_city, datatype):
     else:
         title_text = "Annual Min(blue), Average(black) and Max (red) Percipitation (mm) of " + selected_city
         title_text2 = "Annaul Average Percipitation (mm) Trend of " + selected_city
-
         col_range = [0, 6.5]
         theme_text = 'Percipitation (mm)'
 
@@ -149,7 +188,8 @@ def plot_lineplot(year_range, selected_city, datatype):
                      labels={avg_col: theme_text},
                      center={"lat": 49.8951, "lon": -97.1384},
                      scope = 'north america',
-                     basemap_visible=True)
+                     basemap_visible=True,
+                     title = 'Overall Climate Trend for 13 Canadian Major Cities')
     
 
     return line_fin, trend_plot_fin, map_fin
