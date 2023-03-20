@@ -87,13 +87,13 @@ app.layout = html.Div([
                 dcc.RangeSlider(id='year_slider', min= 1940, 
                                     max=2020,
                                     step=1,
-                                    value=[1940,2020],
+                                    value=[1940,2019],
                                     marks={i: f'{int(i):,}' for i in range(1940, 2021, 20)})
             ], style={"paddingBottom": "20px"})])
             # col stype
             ], style = {"background-color": "rgba(205, 200, 186, 1)",
                "padding": "20px", "margin": "20px", "width": "20%",
-               "height": "800px","opacity": 0.9 },
+               "height": "800px", "opacity": 0.9 },
             md=3),
                
         # Plot Col 
@@ -103,7 +103,7 @@ app.layout = html.Div([
                 dcc.Graph(id="map")
                 ], 
                 style={"padding": "0","margin": "0","width": "100%",
-                     "height": "400px","opacity": 0.9
+                     "height": "400px", "opacity": 0.9,
                      }
                 ),
             # side by side trend plots
@@ -199,7 +199,7 @@ def plot_lineplot(year_range, selected_city, datatype):
                      scope = 'north america',
                      basemap_visible=True,
                      title = 'Overall Climate Trend for 13 Canadian Major Cities: Press ▶️ to start the animation',
-                     height=400
+                     height=400, width = 1000
                      )
     
 
