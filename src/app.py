@@ -7,8 +7,8 @@ import plotly.express as px
 
 
 # ======================= Import data =======================
-temp_df = pd.read_csv('data/processed/temperature_data.csv', index_col=0, parse_dates=True)
-ppt_df = pd.read_csv('data/processed/percipitation_data.csv', index_col=0, parse_dates=True)
+temp_df = pd.read_csv('../data/processed/temperature_data.csv', index_col=0, parse_dates=True)
+ppt_df = pd.read_csv('../data/processed/percipitation_data.csv', index_col=0, parse_dates=True)
 df = pd.concat((temp_df, ppt_df), axis = 1)
 df = df.iloc[:, [0, 1, 3]].copy().iloc[:-1, :] # remove the only 1 record in 2020
 df['Year'] = df.index.year
