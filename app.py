@@ -3,6 +3,8 @@ import dash_bootstrap_components as dbc
 import pandas as pd
 import altair as alt
 from vega_datasets import data
+import plotly.express as px
+
 
 # ======================= Import data =======================
 temp_df = pd.read_csv('data/processed/temperature_data.csv', index_col=0, parse_dates=True)
@@ -12,7 +14,7 @@ df = df.iloc[:, [0, 1, 3]].copy().iloc[:-1, :] # remove the only 1 record in 202
 df['Year'] = df.index.year
 
 # compute annual mean, min, max
-df_sum = df.groupby(by=["Year", "CITY"]).mean()
+df_sum = df.groupby(by=["Year", "CITY"]).mean().round(2)
 df_sum['temp_min'] = df.groupby(by=["Year", "CITY"]).min()['MEAN_TEMP_C']
 df_sum['temp_max'] = df.groupby(by=["Year", "CITY"]).max()['MEAN_TEMP_C']
 df_sum['ppt_min'] = df.groupby(by=["Year", "CITY"]).min()['TOTAL_PERCIP_mm']
@@ -20,6 +22,21 @@ df_sum['ppt_max'] = df.groupby(by=["Year", "CITY"]).max()['TOTAL_PERCIP_mm']
 df_sum.rename(columns = {'MEAN_TEMP_C': 'temp_avg', 
                          'TOTAL_PERCIP_mm' : 'ppt_avg'}, inplace = True)
 df_sum = df_sum.reset_index('CITY').reset_index('Year')
+
+# replace quebec with quebec city
+df_sum['CITY'] = df_sum['CITY'].str.replace('QUEBEC', 'QUEBEC CITY')
+
+# add lon and lat for map
+geo_data = pd.DataFrame({'CITY' : ["CALGARY", "EDMONTON", "HALIFAX", "MONCTON", "MONTREAL", "OTTAWA", "QUEBEC CITY",
+            "SASKATOON", "STJOHNS", "TORONTO", "VANCOUVER", "WHITEHORSE", "WINNIPEG"],
+            'citylat' : [51.0447, 53.5444, 44.6488, 46.0878, 45.5017, 45.4215, 46.8139, 52.1332,
+              47.5615, 43.6532, 49.2827, 60.7212, 49.8951],
+              'citylon' : [-114.0719, -113.4909, -63.5752, -64.7782, -73.5673, -75.6972, -71.2080,
+              -106.6700, -52.7126, -79.3832, -123.1207, -135.0568, -97.1384]
+}
+)
+df_sum = pd.merge(df_sum, geo_data, how = 'left')
+
 
 # city list
 city_lst = df_sum['CITY'].unique().tolist()
@@ -45,49 +62,97 @@ app.layout = html.Div([
                           multi = False,
                           placeholder = 'Select one city to explore'),
 
-    'Select Year Range to explore the trend:', dcc.Slider(id='year_slider', min= 1940, 
+    'Select Year Range to explore the trend:', dcc.RangeSlider(id='year_slider', min= 1940, 
                                     max=2019,
                                     step=1,
-                                    value=2019,
+                                    value=[1940,2019],
                                     marks={i: f'{int(i):,}' for i in range(1940, 2020, 5)}),
 
     html.Iframe(id='line_plot',
-                style={'border-width': '0', 'width': '100%', 'height': '400px'})
+                style={'border-width': '0', 'width': '100%', 'height': '400px'}),
+    html.Iframe(id='trend_plot',
+                style={'border-width': '0', 'width': '100%', 'height': '400px'}),
+    dcc.Graph(id="map",
+              style={"padding": "0","margin": "0","width": "100%",
+                     "height": "340px","opacity": 0.9
+                     })
                    ]) 
 
 # ================== Set up callbacks/backend ===================== 
-# TOTAL_PERCIP_mm
-# MEAN_TEMP_C
 @app.callback(
-    Output('line_plot', 'srcDoc'),
-    Input('year_slider', 'value'),
+    [Output('line_plot', 'srcDoc'),
+     Output('trend_plot', 'srcDoc'),
+     Output('map', 'figure')],
+    [Input('year_slider', 'value'),
     Input('city_dropdown', 'value'),
-    Input('radio_button', 'value'))
-def plot_lineplot(xmax, selected_city, datatype):
+    Input('radio_button', 'value')])
+def plot_lineplot(year_range, selected_city, datatype):
     avg_col = datatype + "_avg"
     min_col = datatype + "_min"
     max_col = datatype + "_max"
 
-    lineplot_df = df_sum.query('Year <= @xmax and CITY in @selected_city')
+    if datatype == 'temp':
+        title_text = "Annaul Min(blue), Average(black) and Max (red) Temperature (C)"
+        title_text2 = "Annaul Average Temperature (C) Trend"
+        col_range = [-8, 12]
+        theme_text = 'Temperature (C)'
+    else:
+        title_text = "Annaul Min(blue), Average(black) and Max (red) Percipitation (mm)"
+        title_text2 = "Annaul Average Percipitation (mm) Trend"
 
-    chart_avg = alt.Chart(lineplot_df).mark_line(color = 'black').encode(
+        col_range = [0, 6.5]
+        theme_text = 'Percipitation (mm)'
+
+
+    # ==== LINE PLOT ======
+    lineplot_df = df_sum.query('Year >= @year_range[0] and Year <= @year_range[1] and CITY in @selected_city')
+
+    chart_avg = alt.Chart(lineplot_df, title = title_text).mark_line(color = 'black').encode(
         alt.X('Year', title='Year'),
         alt.Y(avg_col, title = 'Annual values'),
-        alt.Tooltip(avg_col)).interactive()
+        alt.Tooltip(['Year', avg_col])).interactive()
     
     chart_min = alt.Chart(lineplot_df).mark_line(color = 'blue').encode(
         alt.X('Year', title='Year'),
         alt.Y(min_col),
-        alt.Tooltip(min_col)).interactive()
+        alt.Tooltip(['Year', min_col])).interactive()
     
     chart_max = alt.Chart(lineplot_df).mark_line(color = 'red').encode(
         alt.X('Year', title='Year'),
         alt.Y(max_col),
-        alt.Tooltip(max_col)).interactive()
+        alt.Tooltip(['Year', max_col])).interactive()
     
     line_chart = chart_avg + chart_min + chart_max
     
-    return line_chart.to_html()
+    line_fin = line_chart.to_html()
+
+    # ===== Trendline plot =====
+    trend_points = alt.Chart(lineplot_df, title = title_text2).mark_circle(color = 'silver').encode(
+        alt.X('Year', title='Year', scale=alt.Scale(zero=False)),
+        alt.Y(avg_col, scale=alt.Scale(zero=False)),
+        alt.Tooltip(['Year', avg_col]))
+    
+    trend_reg = trend_points.transform_regression('Year', avg_col, groupby = ['CITY']
+                                                  ).mark_line(color = 'black', size=3)
+    
+    trend_plot_fin = alt.layer(trend_points, trend_reg).to_html()
+
+
+    # ===== MAP ======
+
+    map_fin = px.scatter_geo(df_sum, lon ="citylon", lat = 'citylat', 
+                     color= avg_col, 
+                     hover_name="CITY",
+                     animation_frame="Year",
+                     projection="natural earth",
+                     range_color=col_range,
+                     labels={avg_col: theme_text},
+                     center={"lat": 49.8951, "lon": -97.1384},
+                     scope = 'north america',
+                     basemap_visible=True)
+    
+
+    return line_fin, trend_plot_fin, map_fin
 
 
 if __name__ == '__main__':
