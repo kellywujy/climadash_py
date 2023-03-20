@@ -85,10 +85,10 @@ app.layout = html.Div([
             dbc.Card([
                 dbc.CardHeader('Select Year Range to Zoom In the Trend:', style={'fontWeight': 'bold'}),
                 dcc.RangeSlider(id='year_slider', min= 1940, 
-                                    max=2019,
+                                    max=2020,
                                     step=1,
-                                    value=[1940,2019],
-                                    marks={i: f'{int(i):,}' for i in range(1940, 2020, 10)})
+                                    value=[1940,2020],
+                                    marks={i: f'{int(i):,}' for i in range(1940, 2021, 20)})
             ], style={"paddingBottom": "20px"})])
             # col stype
             ], style = {"background-color": "rgba(205, 200, 186, 1)",
