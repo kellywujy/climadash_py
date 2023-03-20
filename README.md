@@ -3,7 +3,7 @@
 ===
 
 ## Introduction
-This app aims to raise awareness and promote reflection on the issue of climate change in Canada. Through interactive data visualizations and educational resources, we hope to inspire people to think more deeply about the impact of climate change on our planet and the urgent need to take action to address this global challenge. Our goal is to empower individuals to make informed decisions and take meaningful steps towards a more sustainable future.
+This app aims to raise awareness and promote reflection on the issue of climate change in Canada. Through interactive data visualizations and educational resources, I hope to inspire people to think more deeply about the impact of climate change on our planet and the urgent need to take action to address this global challenge. 
 
 ## Project proposal
 📊 [Proposal Link](https://github.com/UBC-MDS/climadash/blob/main/report/proposal.md)
@@ -11,17 +11,19 @@ This app aims to raise awareness and promote reflection on the issue of climate 
 
 ## Description
 
-This dashboard aim to show the Canadian climate change over eighty years. The dashboard contains a landing page that shows visualization of several key metrics for Canadian weather data from 1940 - 2020. 
+![pic](/data/screenshot.png)
 
-To show the general trend over years, two plots are presented: the line plot with showing the mean of variable on a yearly basis, and a scatter plot of the annual averages with a smoothed trend line. These two plots are aligned vertically to allow easier comparison. Color coding will be used to distinguish the three lines.
+This dashboard aim to show the Canadian climate change over eighty years, using the data collected from 13 Canadian major cities. 
 
-To show the temperature distribution by month, a bar plot for monthly averages over years is presented. Color coding will be used to distinguish negative and positive values.
+To show the general trend over years, an animated plot is presented. The plot is a scatter map with the location of each city represented by a dot. The colors of the dots correspond to the annual average temperature (in degree Celsius) or percipiation (in mm). The higher the value, the lighter the color. By clicking on the play button, plot will shows the gradual change in temperature (or percipitation, depending on the selection in the radio button), reflected through the change of color. 
 
-To tell the story about extreme weathers, a line plot for the annual maximum and minimum temperature difference is presented. 
+To closely examine the trend for the city of interest, two plots are presented.
+- Line plot with mean, minimum and maximum of the metric of interest.
+- Scatter plot of the annual averages with an estimated regression line showing the general trend of climate change.
 
-In the menu, the user can use three widgets to customize the information displayed in the dashboard. From the drop down, users can select to see the data for entire Canada or only certain province or territory. From the year filter, users can zoom in and out to examine the trend during specific range of years. From the radio buttons, users can choose to view the data for temperature, or precipitation. 
+For both of the plots described above, the user could select the city of interest, and the range of years that they want to closely examine.
 
-Tooltip will be used in all plots so that users can easily check the actual x-axis and y-axis values when hovering over the plots.
+Tooltip will show the detailed data when hovering over the plots. 
 
 
 ## License
