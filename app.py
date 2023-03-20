@@ -92,13 +92,13 @@ def plot_lineplot(year_range, selected_city, datatype):
     max_col = datatype + "_max"
 
     if datatype == 'temp':
-        title_text = "Annaul Min(blue), Average(black) and Max (red) Temperature (C)"
-        title_text2 = "Annaul Average Temperature (C) Trend"
+        title_text = "Annual Min(blue), Average(black) and Max (red) Temperature (C) of " + selected_city
+        title_text2 = "Annual Average Temperature (C) Trend of " + selected_city
         col_range = [-8, 12]
         theme_text = 'Temperature (C)'
     else:
-        title_text = "Annaul Min(blue), Average(black) and Max (red) Percipitation (mm)"
-        title_text2 = "Annaul Average Percipitation (mm) Trend"
+        title_text = "Annual Min(blue), Average(black) and Max (red) Percipitation (mm) of " + selected_city
+        title_text2 = "Annaul Average Percipitation (mm) Trend of " + selected_city
 
         col_range = [0, 6.5]
         theme_text = 'Percipitation (mm)'
