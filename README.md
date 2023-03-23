@@ -29,6 +29,8 @@ For both of the plots described above, the user could *select the city of intere
 
 Tooltip will show the detailed data when hovering over the plots. 
 
+## Data
+The data for 80-years of weather data collected from stations from various major Canadian cities are used for this dashboard. The data was collected at daily intervals where the mean temperature and total percipitation (including both rain and snow) was recorded. Since not all stations in each city had full data, the source had pieced together the data using various stations around the cities with the data provided from the Government of Canada. The data starts from the 1940's and ends at the end of 2019. The data used in this project are based on [this Kaggle dataset](https://www.kaggle.com/datasets/aturner374/eighty-years-of-canadian-climate-data). The data were originally collected by [Canadian Centre for Climate Services](https://climate-change.canada.ca/climate-data/#/daily-climate-data).
 
 ## License
 
