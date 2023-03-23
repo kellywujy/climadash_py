@@ -9,8 +9,8 @@ import plotly.express as px
 # ======================= Import data =======================
 temp_df = pd.read_csv('../data/processed/temperature_data.csv', index_col=0, parse_dates=True)
 ppt_df = pd.read_csv('../data/processed/percipitation_data.csv', index_col=0, parse_dates=True)
-df = pd.concat((temp_df, ppt_df), axis = 1)
-df = df.iloc[:, [0, 1, 3]].copy().iloc[:-1, :] # remove the only 1 record in 2020
+df_all = pd.concat((temp_df, ppt_df), axis = 1)
+df = df_all.iloc[:, [0, 1, 3]].iloc[:-1, :].copy() # remove the only 1 record in 2020
 df['Year'] = df.index.year
 
 # compute annual mean, min, max
@@ -60,7 +60,7 @@ app.layout = html.Div([
                 'text-align': 'center',
                 'font-size': '48px'}
                      ),
-                     
+               
     dbc.Row([
         # Widget Col
         dbc.Col([
@@ -70,8 +70,8 @@ app.layout = html.Div([
                 dbc.CardBody(dcc.RadioItems( id='radio_button',
                            options=[{'label': 'Temperature (C)', 'value': 'temp'},
                                     {'label': 'Percipitation (mm)', 'value': 'ppt'}],
-            value='temp'))], style={"paddingBottom": "20px"})
-            ], style = {'paddingBottom': '300px'}),
+            value='temp'))], style={"paddingBottom": "10px"})
+            ], style = {'paddingBottom': '260px'}),
 
             dbc.Row([
             dbc.Card([
@@ -85,10 +85,10 @@ app.layout = html.Div([
             dbc.Card([
                 dbc.CardHeader('Select Year Range to Zoom In the Trend:', style={'fontWeight': 'bold'}),
                 dcc.RangeSlider(id='year_slider', min= 1940, 
-                                    max=2020,
+                                    max=2019,
                                     step=1,
                                     value=[1940,2019],
-                                    marks={i: f'{int(i):,}' for i in range(1940, 2021, 20)})
+                                    marks={i: f'{int(i):,}' for i in range(1940, 2020, 10)})
             ], style={"paddingBottom": "20px"})])
             # col stype
             ], style = {"background-color": "rgba(205, 200, 186, 1)",
@@ -102,7 +102,7 @@ app.layout = html.Div([
             dbc.Row([
                 dcc.Graph(id="map")
                 ], 
-                style={"padding": "0","margin": "0","width": "100%",
+                style={"padding": "20","margin": "0","width": "100%",
                      "height": "400px", "opacity": 0.9,
                      }
                 ),
