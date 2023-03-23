@@ -88,7 +88,7 @@ app.layout = html.Div([
                                     max=2019,
                                     step=1,
                                     value=[1940,2019],
-                                    marks={i: f'{int(i):,}' for i in range(1940, 2020, 10)})
+                                    marks={i: f'{int(i)}' for i in range(1940, 2020, 10)})
             ], style={"paddingBottom": "20px"})])
             # col stype
             ], style = {"background-color": "rgba(205, 200, 186, 1)",
